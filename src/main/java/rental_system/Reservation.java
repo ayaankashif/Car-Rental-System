@@ -1,7 +1,7 @@
+package rental_system;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 class Reservation {
     private Vehicle vehicle;

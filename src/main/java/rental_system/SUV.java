@@ -1,3 +1,4 @@
+package rental_system;
 
 public class SUV extends Vehicle {
     public SUV(){

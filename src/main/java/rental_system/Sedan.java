@@ -1,3 +1,4 @@
+package rental_system;
 
 public class Sedan extends Vehicle{
     public Sedan() {

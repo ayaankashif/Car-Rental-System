@@ -1,3 +1,4 @@
+package rental_system;
 
 import java.util.Scanner;
 import java.util.ArrayList;

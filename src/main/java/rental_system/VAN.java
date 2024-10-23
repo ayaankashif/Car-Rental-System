@@ -1,24 +1,24 @@
+package rental_system;
 
 public class VAN extends Vehicle{
     private int seats;
 
     public VAN(int seats){
-        super("VAN", calculateHourlyrate(seats) , new String[]{"Crew VAN", "Toyota Hiace", "Camper VAN"} );
+        super("VAN", 0 , new String[]{"Crew VAN", "Toyota Hiace", "Camper VAN"} );
         this.seats = seats;
-    }
-
-    private static double calculateHourlyrate(int seats) {
-        if (seats == 6) {
-            return 2000.0;
-        }else if (seats == 10){
-            return 3000.0;
-        }else {
-            return 4000.0;
-        }
     }
 
     @Override
     public double CalculateRentalCost(int hours){
+        double Hourlyrate;
+
+        if (seats == 6) {
+            Hourlyrate = 2000.0;
+        }else if (seats == 10){
+            Hourlyrate =  3000.0;
+        }else {
+            Hourlyrate = 4000.0;
+        }
         return hours * Hourlyrate;
     }
 
