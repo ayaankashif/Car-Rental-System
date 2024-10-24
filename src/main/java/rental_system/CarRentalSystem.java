@@ -1,16 +1,12 @@
-package rental_system;
+package rental_system; 
 
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
-
-import rental_system.CarRentalException.*;
 
 public class CarRentalSystem {
     private static List<Reservation> reservations = new ArrayList<>();
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
         
         Sedan sedan = new Sedan();
@@ -55,7 +51,7 @@ public class CarRentalSystem {
     }
 }
     
-    private static void vehicleManagement(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) {
+    private static void vehicleManagement(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) throws InvalidVehicleTypeException, VehicleAlreadyRentedException {
         boolean goBack = false;
 
         while (!goBack) {
@@ -97,7 +93,7 @@ public class CarRentalSystem {
         }
     }
 
-    private static void registerVehicle(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) {
+    private static void registerVehicle(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) throws InvalidVehicleTypeException, VehicleAlreadyRentedException {
         System.out.println("Select vehicle type to rent:");
         System.out.println("1: Sedan");
         System.out.println("2: SUV");
@@ -176,7 +172,7 @@ public class CarRentalSystem {
     }
         
 
-    private static void rentAcar(Scanner scanner) {
+    private static void rentAcar(Scanner scanner) throws VehicleAlreadyRentedException, InvalidVehicleTypeException, InvalidReservationException {
         boolean renting = true;
     
         while (renting) {
@@ -209,13 +205,12 @@ public class CarRentalSystem {
         }
     }
     
-    private static void updateReservation(Scanner scanner) {
+    private static void updateReservation(Scanner scanner) throws InvalidReservationException {
         System.out.println("Enter reservation number to update (1 to " + reservations.size() + "):");
         int reservationNumber = scanner.nextInt() - 1;
         
             if (reservationNumber < 0 || reservationNumber >= reservations.size()) {
                 throw new InvalidReservationException("Invalid reservation number.");
-                return;
             }
 
             System.out.print("Enter new number of hours: ");
@@ -224,7 +219,7 @@ public class CarRentalSystem {
             System.out.println("Reservation updated. New cost: $" + reservations.get(reservationNumber).getCost());
         }
     
-    private static void cancelReservation(Scanner scanner) {
+    private static void cancelReservation(Scanner scanner) throws InvalidReservationException {
         System.out.println("Enter reservation number to cancel (1 to " + reservations.size() + "):");
         int reservationNumber = scanner.nextInt() - 1;
         
