@@ -8,12 +8,16 @@ class Reservation {
     private String model;
     private int hours;
     private double cost;
+    private Customer customer;
+    private Employee assignedEmployee;
 
-    public Reservation(Vehicle vehicle, String model, int hours) {
+    public Reservation(Vehicle vehicle, String model, int hours, Customer customer, Employee employee) {
         this.vehicle = vehicle;
         this.model = model;
         this.hours = hours;
         this.cost = vehicle.CalculateRentalCost(hours);
+        this.customer = customer;
+        this.assignedEmployee = employee;
     }
 
     public Vehicle getVehicle() {
@@ -30,6 +34,14 @@ class Reservation {
 
     public double getCost() {
         return cost;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public Employee getAssignedEmployee() {
+        return assignedEmployee;
     }
 
     public void updateReservation(int newHours) {

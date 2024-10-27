@@ -6,15 +6,19 @@ import java.util.List;
 
 public class CarRentalSystem {
     private static List<Reservation> reservations = new ArrayList<>();
+    private static List<Employee> employees = new ArrayList<>();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
         Sedan sedan = new Sedan();
         SUV suv = new SUV();
-        VAN van = new VAN(0);
         VAN van6seater = new VAN(6);
         VAN van10seater  = new VAN(10);
-        
+
+        employees.add(new Employee("Mananger", "Rental Manager"));
+        employees.add(new Employee("Worker1", "Maintenance Worker"));
+        employees.add(new Employee("Worker2", "Maintenance Worker"));
+
         boolean exit = false;
     try{
         while (!exit) {
@@ -22,8 +26,10 @@ public class CarRentalSystem {
         System.out.println("Vehicle Rental System");
         System.out.println("---------------------");
         System.out.println("1: Vehicle Management");
-        System.out.println("2: RentAcar");
-        System.out.println("3: Exit");
+        System.out.println("2: RentACar");
+        System.out.println("3: Employees");
+        System.out.println("4: Display Status");
+        System.out.println("5: Exit");
         
         int VehicleChoice = scanner.nextInt();
         
@@ -36,7 +42,15 @@ public class CarRentalSystem {
                 rentAcar(scanner);
                 break;
                 
-                case 3:
+            case 3:
+                displayEmployees(); 
+                break;
+            
+            case 4:
+                displayStatus();
+                break;
+                
+            case 5:
                 exit = true;
                 break;
                 
@@ -121,6 +135,16 @@ public class CarRentalSystem {
             throw new InvalidVehicleTypeException("Invalid vehicle type selected");
         }
 
+        System.out.print("Enter your name: ");
+        scanner.nextLine();
+        String customername = scanner.nextLine();
+        
+        System.out.print("Enter your Contact: ");
+        String contact = scanner.nextLine();
+
+        Customer customer = new Customer(customername, contact);
+        Employee manager = new Employee("Manager", "Rental Manager");
+
         System.out.println("You selected: " + vehicle.getType());
         System.out.println();
         vehicle.showModels();        
@@ -144,7 +168,7 @@ public class CarRentalSystem {
 
         System.out.println("Total rental cost for " + hours + " hours is: $ " + TotalCost);
         System.out.println("\nIs there anyone who wants to rent a vehicle (yes|no)");
-        reservations.add (new Reservation (vehicle, selectedModel, hours));
+        reservations.add (new Reservation (vehicle, selectedModel, hours, customer, manager));
         
         String anothervehicle = scanner.next();
         if (!anothervehicle.equals("yes")) {
@@ -229,7 +253,37 @@ public class CarRentalSystem {
         
         Reservation reservation = reservations.remove(reservationNumber);
         reservation.getVehicle().setAvailable(reservation.getModel().indexOf(reservation.getModel()), true); 
-        System.out.println("Reservation for " + reservation.getModel() + " has been canceled.");
+        
+        Employee worker = new Employee("Worker", "Maintenance Worker");
+
+        System.out.println("Reservation for " + reservation.getModel() + " has been canceled and assigned to " + worker.getrole() + " for maintenance.");
     }
                 
+
+    private static void displayStatus() {
+        System.out.println("\nCurrent Reservations Status:");
+        if (reservations.isEmpty()) {
+            System.out.println("No active reservations.");
+        } else {
+            for (int i = 0; i < reservations.size(); i++) {
+                Reservation res = reservations.get(i);
+                System.out.println("Reservation #" + (i + 1) + ":");
+                System.out.println("Customer Name: " + res.getCustomer().getname());
+                System.out.println("Contact: " + res.getCustomer().getcontact());
+                System.out.println("Vehicle: " + res.getVehicle().getType() + " - " + res.getModel());
+                System.out.println("Hours Rented: " + res.getHours());
+                System.out.println("Assigned Employee: " + res.getAssignedEmployee().getname() + " (" + res.getAssignedEmployee().getrole() + ")");
+                System.out.println("Total Cost: $" + res.getCost());
+                System.out.println("---------------------");
+            }
+        }
+    }
+
+    private static void displayEmployees() {
+        System.out.println("\nEmployee List:");
+        for (Employee emp : employees) {
+            System.out.println("Name: " + emp.getname() + " | Role: " + emp.getrole());
+        }
+    }
+
 }
