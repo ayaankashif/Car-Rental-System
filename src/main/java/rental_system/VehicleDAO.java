@@ -26,5 +26,25 @@ public class VehicleDAO {
         }
         return false;
     }
+
+    public boolean returnVehicle(int vehicleId) {
+        String sql = "UPDATE Vehicle SET is_available = 1 WHERE vehicle_id = ?";
+    
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, vehicleId);
+    
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("SQL error message " + e.getErrorCode());
+            System.out.println("SQL state " + e.getSQLState());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 }
 

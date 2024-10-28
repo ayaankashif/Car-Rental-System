@@ -55,7 +55,7 @@ public abstract class Vehicle {
     public boolean isAvailable(int index) {
         return availability[index];
     }
-
+    
     //method to update availability
 
     public void setAvailable(int index, boolean isAvailable){

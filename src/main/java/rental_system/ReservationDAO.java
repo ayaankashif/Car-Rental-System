@@ -6,7 +6,6 @@ import rental_system.DB.DbConnection;
 
 public class ReservationDAO {
     public boolean saveReservation(Reservation reservation) {
-    
         try  (Connection connection = DbConnection.getConnection())  {
             String sql = "INSERT INTO Reservation (vehicle_id, customer_id, employee_id, hours_rented, total_cost, model, reservation_status) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";

@@ -187,7 +187,7 @@ public class CarRentalSystem {
         }
         
         System.out.println("\nIs there anyone who wants to rent a vehicle (yes|no)");
-         
+        
         String anothervehicle = scanner.next();
         if (!anothervehicle.equals("yes")) {
             return;
@@ -224,7 +224,8 @@ public class CarRentalSystem {
             System.out.println("1: Reserve Vehicle");
             System.out.println("2: Update Reservation");
             System.out.println("3: Cancel Reservation");
-            System.out.println("4: Go Back");
+            System.out.println("4: Return Vehicle");
+            System.out.println("5: Go Back");
             
             int choice = scanner.nextInt();
             
@@ -239,6 +240,9 @@ public class CarRentalSystem {
                     cancelReservation(scanner);
                     break;
                 case 4:
+                    returnVehicle(scanner);
+                    break;
+                case 5:
                     renting = false;
                     break;
                 default:
@@ -259,7 +263,7 @@ public class CarRentalSystem {
             int newHours = scanner.nextInt();
             reservations.get(reservationNumber).updateReservation(newHours);
             System.out.println("Reservation updated. New cost: $" + reservations.get(reservationNumber).getCost());
-        }
+    }
     
     private static void cancelReservation(Scanner scanner) throws InvalidReservationException {
         System.out.println("Enter reservation number to cancel (1 to " + reservations.size() + "):");
@@ -272,11 +276,33 @@ public class CarRentalSystem {
         Reservation reservation = reservations.remove(reservationNumber);
         reservation.getVehicle().setAvailable(reservation.getModel().indexOf(reservation.getModel()), true); 
         
-        Employee worker = new Employee("Worker", "Maintenance Worker");
-
-        System.out.println("Reservation for " + reservation.getModel() + " has been canceled and assigned to " + worker.getrole() + " for maintenance.");
+        System.out.println("Reservation for " + reservation.getModel() + " has been canceled.");
     }
-                
+
+    private static void returnVehicle(Scanner scanner) throws InvalidReservationException {
+        System.out.println("Enter reservation number to cancel (1 to " + reservations.size() + "):");
+        int reservationNumber = scanner.nextInt() - 1;
+        
+        if (reservationNumber < 0 || reservationNumber >= reservations.size()) {
+            throw new InvalidReservationException("Invalid reservation number.");
+        }
+        
+        Reservation reservation = reservations.remove(reservationNumber);
+        Vehicle vehicle = reservation.getVehicle();
+
+        vehicle.setAvailable(reservation.getModel().indexOf(reservation.getModel()), true); 
+
+        VehicleDAO vehicleDAO = new VehicleDAO();
+        if (vehicleDAO.returnVehicle(vehicle.getId())) {
+            System.out.println("Vehicle availability updated in the database.");
+        } else {
+            System.out.println("Failed to update vehicle availability in the database.");
+        }
+        
+        Employee worker = new Employee("Worker", "Maintenance Worker");
+        System.out.println("The Vehicle " + reservation.getModel() + " has been returned and assigned to " + worker.getrole() + " for maintenance.");
+    }
+    
 
     private static void displayStatus() {
         System.out.println("\nCurrent Reservations Status:");
