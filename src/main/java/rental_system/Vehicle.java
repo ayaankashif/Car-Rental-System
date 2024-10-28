@@ -5,6 +5,9 @@ public abstract class Vehicle {
     protected double Hourlyrate;
     protected String[] models;
     protected boolean[] availability;
+    private int id;
+    private static int idCounter = 0;
+
 
     //{true,false,true}
 
@@ -13,12 +16,16 @@ public abstract class Vehicle {
         this.Hourlyrate = Hourlyrate;
         this.models = models;
         this.availability = new boolean[models.length] ;
-        
+        this.id = ++idCounter;
         
         for (int i = 0; i < availability.length; i++) {
             availability[i] = true;
         }
     }  
+
+    public int getId(){
+        return id;
+    }
 
     public double CalculateRentalCost(int hours){
         return hours * Hourlyrate;

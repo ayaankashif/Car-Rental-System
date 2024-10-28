@@ -168,7 +168,17 @@ public class CarRentalSystem {
 
         System.out.println("Total rental cost for " + hours + " hours is: $ " + TotalCost);
         System.out.println("\nIs there anyone who wants to rent a vehicle (yes|no)");
-        reservations.add (new Reservation (vehicle, selectedModel, hours, customer, manager));
+        
+        Reservation reservation = new Reservation(vehicle, selectedModel, hours, customer, manager);
+        reservations.add(reservation); // Add reservation to the list
+    
+        // Save reservation to the database
+        ReservationDAO reservationDAO = new ReservationDAO(); 
+        if (reservationDAO.saveReservation(reservation)) {
+            System.out.println("Reservation saved successfully!");
+        } else {
+            System.out.println("Failed to save reservation.");
+        }
         
         String anothervehicle = scanner.next();
         if (!anothervehicle.equals("yes")) {
@@ -285,5 +295,4 @@ public class CarRentalSystem {
             System.out.println("Name: " + emp.getname() + " | Role: " + emp.getrole());
         }
     }
-
 }

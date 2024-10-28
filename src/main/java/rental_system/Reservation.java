@@ -1,8 +1,5 @@
 package rental_system;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class Reservation {
     private Vehicle vehicle;
     private String model;
@@ -11,13 +8,13 @@ class Reservation {
     private Customer customer;
     private Employee assignedEmployee;
 
-    public Reservation(Vehicle vehicle, String model, int hours, Customer customer, Employee employee) {
+    public Reservation(Vehicle vehicle, String model, int hours, Customer customer, Employee assignedEmployee) {
         this.vehicle = vehicle;
         this.model = model;
         this.hours = hours;
         this.cost = vehicle.CalculateRentalCost(hours);
         this.customer = customer;
-        this.assignedEmployee = employee;
+        this.assignedEmployee = assignedEmployee;
     }
 
     public Vehicle getVehicle() {
