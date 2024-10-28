@@ -23,6 +23,14 @@ public abstract class Vehicle {
         }
     }  
 
+    public double getHourlyRate(){
+        return Hourlyrate;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId(){
         return id;
     }
@@ -58,6 +66,11 @@ public abstract class Vehicle {
         return models[index];
     }   
     
-    
+    public String getModels(int index) {
+        if (index >= 0 && index < models.length) { 
+            return models[index];
+        }
+        return null;
+    }
 
 }

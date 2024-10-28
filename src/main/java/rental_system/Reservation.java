@@ -7,6 +7,7 @@ class Reservation {
     private double cost;
     private Customer customer;
     private Employee assignedEmployee;
+    private int id; 
 
     public Reservation(Vehicle vehicle, String model, int hours, Customer customer, Employee assignedEmployee) {
         this.vehicle = vehicle;
@@ -15,6 +16,14 @@ class Reservation {
         this.cost = vehicle.CalculateRentalCost(hours);
         this.customer = customer;
         this.assignedEmployee = assignedEmployee;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId(){
+        return id;
     }
 
     public Vehicle getVehicle() {

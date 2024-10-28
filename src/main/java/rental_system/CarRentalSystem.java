@@ -165,21 +165,29 @@ public class CarRentalSystem {
         System.out.print("\nEnter the number of Hours you need the Vehicle: ");
         int hours = scanner.nextInt();
         double TotalCost = vehicle.CalculateRentalCost(hours);
-
-        System.out.println("Total rental cost for " + hours + " hours is: $ " + TotalCost);
-        System.out.println("\nIs there anyone who wants to rent a vehicle (yes|no)");
         
-        Reservation reservation = new Reservation(vehicle, selectedModel, hours, customer, manager);
-        reservations.add(reservation); // Add reservation to the list
-    
-        // Save reservation to the database
-        ReservationDAO reservationDAO = new ReservationDAO(); 
-        if (reservationDAO.saveReservation(reservation)) {
-            System.out.println("Reservation saved successfully!");
+        System.out.println("Total rental cost for " + hours + " hours is: $ " + TotalCost);
+        
+        reservations.add (new Reservation (vehicle, selectedModel, hours, customer, manager));
+
+        VehicleDAO vehicleDAO = new VehicleDAO();
+        CustomerDAO customerDAO = new CustomerDAO();
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        ReservationDAO reservationDAO = new ReservationDAO();
+
+        if (vehicleDAO.saveVehicle(vehicle) && customerDAO.saveCustomer(customer) && employeeDAO.saveEmployee(manager)) {
+            Reservation reservation = new Reservation(vehicle, selectedModel, hours, customer, manager);
+            if (reservationDAO.saveReservation(reservation)) {
+                System.out.println("Reservation saved successfully!");
+            } else {
+                System.out.println("Failed to save reservation.");
+            }
         } else {
-            System.out.println("Failed to save reservation.");
+            System.out.println("Failed to save vehicle, customer, or employee.");
         }
         
+        System.out.println("\nIs there anyone who wants to rent a vehicle (yes|no)");
+         
         String anothervehicle = scanner.next();
         if (!anothervehicle.equals("yes")) {
             return;

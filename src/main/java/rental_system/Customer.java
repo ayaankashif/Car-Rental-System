@@ -11,6 +11,10 @@ public class Customer {
         this.contact = contact;
         this.id = ++idCounter;
     }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getId(){
         return id;  
