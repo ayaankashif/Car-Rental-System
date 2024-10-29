@@ -5,6 +5,10 @@ public class Customer {
     private String contact;
     private int id;
     private static int idCounter = 0;
+
+    public Customer() {
+        // This constructor is intentionally empty.
+    }
     
     public Customer(String name, String contact){
         this.name = name;
@@ -14,6 +18,14 @@ public class Customer {
     
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public int getId(){

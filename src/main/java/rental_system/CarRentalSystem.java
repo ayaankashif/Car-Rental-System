@@ -7,9 +7,10 @@ import java.util.List;
 public class CarRentalSystem {
     private static List<Reservation> reservations = new ArrayList<>();
     private static List<Employee> employees = new ArrayList<>();
+    private static CustomerDAO customerDAO = new CustomerDAO();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         Sedan sedan = new Sedan();
         SUV suv = new SUV();
         VAN van6seater = new VAN(6);
@@ -27,9 +28,10 @@ public class CarRentalSystem {
         System.out.println("---------------------");
         System.out.println("1: Vehicle Management");
         System.out.println("2: RentACar");
-        System.out.println("3: Employees");
-        System.out.println("4: Display Status");
-        System.out.println("5: Exit");
+        System.out.println("3: Add a Customer");
+        System.out.println("4: Employees");
+        System.out.println("5: Display Status");
+        System.out.println("6: Exit");
         
         int VehicleChoice = scanner.nextInt();
         
@@ -41,16 +43,20 @@ public class CarRentalSystem {
             case 2:
                 rentAcar(scanner);
                 break;
-                
+            
             case 3:
+                registerCustomer(scanner);
+                break;
+                
+            case 4:
                 displayEmployees(); 
                 break;
             
-            case 4:
+            case 5:
                 displayStatus();
                 break;
                 
-            case 5:
+            case 6:
                 exit = true;
                 break;
                 
@@ -64,7 +70,24 @@ public class CarRentalSystem {
         scanner.close();
     }
 }
-    
+
+    private static void registerCustomer(Scanner scanner) {
+        System.out.print("Your name: ");    
+        String name = scanner.nextLine(); 
+        
+        System.out.print("Your Contact: "); 
+        String contact = scanner.nextLine(); 
+        
+        Customer customer = new Customer(name, contact); 
+        
+        if (customerDAO.saveCustomer(customer)) {  
+            System.out.println("New customer registered successfully.");
+        } else {
+            System.out.println("Failed to register new customer.");
+        }
+    }
+
+
     private static void vehicleManagement(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) throws InvalidVehicleTypeException, VehicleAlreadyRentedException {
         boolean goBack = false;
 
@@ -115,6 +138,7 @@ public class CarRentalSystem {
         System.out.println("4: VAN (10-seater)");
     
         int vehicleType = scanner.nextInt();
+        scanner.nextLine();
 
         Vehicle vehicle = null;
 
@@ -134,15 +158,29 @@ public class CarRentalSystem {
             default:
             throw new InvalidVehicleTypeException("Invalid vehicle type selected");
         }
-
-        System.out.print("Enter your name: ");
-        scanner.nextLine();
-        String customername = scanner.nextLine();
         
         System.out.print("Enter your Contact: ");
         String contact = scanner.nextLine();
+        
+        Customer existingCustomer = customerDAO.findCustomerByContact(contact);
 
-        Customer customer = new Customer(customername, contact);
+        Customer customer;
+        if (existingCustomer != null) {
+            System.out.println("Welcome back, " + existingCustomer.getname() + "!");
+            customer = existingCustomer; 
+        } else {
+
+            System.out.print("Enter your name: ");
+            String customerName = scanner.nextLine();
+            customer = new Customer(customerName, contact);
+        
+            if (customerDAO.saveCustomer(customer)) {
+            System.out.println("New customer registered successfully.");
+            } else {
+            System.out.println("Failed to register new customer.");
+            }
+        }
+
         Employee manager = new Employee("Manager", "Rental Manager");
 
         System.out.println("You selected: " + vehicle.getType());
@@ -167,32 +205,28 @@ public class CarRentalSystem {
         double TotalCost = vehicle.CalculateRentalCost(hours);
         
         System.out.println("Total rental cost for " + hours + " hours is: $ " + TotalCost);
+
         
         reservations.add (new Reservation (vehicle, selectedModel, hours, customer, manager));
 
         VehicleDAO vehicleDAO = new VehicleDAO();
-        CustomerDAO customerDAO = new CustomerDAO();
-        EmployeeDAO employeeDAO = new EmployeeDAO();
         ReservationDAO reservationDAO = new ReservationDAO();
 
-        if (vehicleDAO.saveVehicle(vehicle) && customerDAO.saveCustomer(customer) && employeeDAO.saveEmployee(manager)) {
-            Reservation reservation = new Reservation(vehicle, selectedModel, hours, customer, manager);
+        Reservation reservation = new Reservation(vehicle, selectedModel, hours, customer, manager);
             if (reservationDAO.saveReservation(reservation)) {
                 System.out.println("Reservation saved successfully!");
             } else {
                 System.out.println("Failed to save reservation.");
             }
-        } else {
-            System.out.println("Failed to save vehicle, customer, or employee.");
-        }
-        
+
         System.out.println("\nIs there anyone who wants to rent a vehicle (yes|no)");
         
         String anothervehicle = scanner.next();
         if (!anothervehicle.equals("yes")) {
             return;
         }
-    }
+    } 
+    
         
     private static void updateVehicle(Scanner scanner) {
             System.out.println("Feature not implemented yet. Please check back later.");
@@ -303,7 +337,7 @@ public class CarRentalSystem {
         System.out.println("The Vehicle " + reservation.getModel() + " has been returned and assigned to " + worker.getrole() + " for maintenance.");
     }
     
-
+    
     private static void displayStatus() {
         System.out.println("\nCurrent Reservations Status:");
         if (reservations.isEmpty()) {
