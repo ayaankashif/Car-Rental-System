@@ -1,4 +1,4 @@
-package rental_system;
+package rental_system.models;
 
 public class Customer {
     private String name;

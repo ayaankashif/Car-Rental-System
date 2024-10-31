@@ -1,10 +1,10 @@
-package rental_system;
+package rental_system.models;
 
 public class VAN extends Vehicle{
     private int seats;
 
-    public VAN(int seats){
-        super("VAN", 0 , new String[]{"Crew VAN", "Toyota Hiace", "Camper VAN"} );
+    public VAN(int seats, String LicencePlate){
+        super("VAN", 0 , new String[]{"Crew VAN", "Toyota Hiace", "Camper VAN"}, LicencePlate);
         this.seats = seats;
     }
 

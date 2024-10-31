@@ -1,4 +1,4 @@
-package rental_system;
+package rental_system.models;
 
 public abstract class Vehicle {
     protected String type;
@@ -7,21 +7,36 @@ public abstract class Vehicle {
     protected boolean[] availability;
     private int id;
     private static int idCounter = 0;
+    private String LicensePlate;
 
 
     //{true,false,true}
+    //generate license number.
 
-    public Vehicle(String type, double Hourlyrate, String[] models) {
+    public Vehicle(String type, double Hourlyrate, String[] models, String LicensePlate) {
         this.type = type;
         this.Hourlyrate = Hourlyrate;
         this.models = models;
         this.availability = new boolean[models.length] ;
         this.id = ++idCounter;
+        this.LicensePlate = LicensePlate;
         
         for (int i = 0; i < availability.length; i++) {
             availability[i] = true;
         }
     }  
+
+    // public void setModel(String model) {
+    //     this.model = model;
+    // }
+    
+    public void setLicensePlate(String LicensePlate){
+        this.LicensePlate = LicensePlate;
+    }
+
+    public String getLicensePlate(){
+        return LicensePlate;
+    }
 
     public double getHourlyRate(){
         return Hourlyrate;

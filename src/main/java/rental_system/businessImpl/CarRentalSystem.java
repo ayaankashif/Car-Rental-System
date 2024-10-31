@@ -1,20 +1,56 @@
-package rental_system; 
+package rental_system.businessImpl; 
 
 import java.util.Scanner;
+
+import rental_system.dao.CustomerDAO;
+import rental_system.dao.EmployeeDAO;
+import rental_system.dao.ReservationDAO;
+import rental_system.dao.VehicleDAO;
+import rental_system.exception.CarRentalException;
+import rental_system.exception.InvalidReservationException;
+import rental_system.exception.InvalidVehicleTypeException;
+import rental_system.exception.VehicleAlreadyRentedException;
+import rental_system.models.Customer;
+import rental_system.models.Employee;
+import rental_system.models.Reservation;
+import rental_system.models.SUV;
+import rental_system.models.Sedan;
+import rental_system.models.VAN;
+import rental_system.models.Vehicle;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CarRentalSystem {
     private static List<Reservation> reservations = new ArrayList<>();
     private static List<Employee> employees = new ArrayList<>();
+
     private static CustomerDAO customerDAO = new CustomerDAO();
+    private static VehicleDAO vehicleDAO = new VehicleDAO();
+    private static EmployeeDAO employeeDAO = new EmployeeDAO();
+    private static ReservationDAO reservationDAO = new ReservationDAO();
+    
+    //private CustomerBusinessImpl customerBusinessImpl = new CustomerBusinessImpl();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        Sedan sedan = new Sedan();
-        SUV suv = new SUV();
-        VAN van6seater = new VAN(6);
-        VAN van10seater  = new VAN(10);
+        Sedan sedan = new Sedan("YUR-922");
+        SUV suv = new SUV("AFI-928");
+        VAN van6seater = new VAN(6, "MLK-287");
+        VAN van10seater  = new VAN(10, "SRF-716");
+
+        //getvehicles 
+
+        // Sedan sedanCorolla = new Sedan("Corolla","M-007");
+        // Sedan sedanCivic= new Sedan("Civic","ETF-088");
+        // Sedan sedanCity = new Sedan("City","MHE-932");
+        // SUV suv = new SUV("","KFH-836");
+        // SUV suv = new SUV("","LWE-836");
+        // VAN van6seater = new VAN(6,"","");
+        // VAN van6seater = new VAN(6,"","");
+        // VAN van10seater  = new VAN(10),"","");
+        // VAN van10seater  = new VAN(10,"","");
 
         employees.add(new Employee("Mananger", "Rental Manager"));
         employees.add(new Employee("Worker1", "Maintenance Worker"));
@@ -72,11 +108,13 @@ public class CarRentalSystem {
 }
 
     private static void registerCustomer(Scanner scanner) {
+    
+        Scanner scanner2 = new Scanner(System.in);
         System.out.print("Your name: ");    
-        String name = scanner.nextLine(); 
+        String name = scanner2.nextLine(); 
         
         System.out.print("Your Contact: "); 
-        String contact = scanner.nextLine(); 
+        String contact = scanner2.nextLine(); 
         
         Customer customer = new Customer(name, contact); 
         
@@ -85,8 +123,8 @@ public class CarRentalSystem {
         } else {
             System.out.println("Failed to register new customer.");
         }
+        scanner2.close();
     }
-
 
     private static void vehicleManagement(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) throws InvalidVehicleTypeException, VehicleAlreadyRentedException {
         boolean goBack = false;
@@ -154,7 +192,7 @@ public class CarRentalSystem {
                 break;
             case 4:
                 vehicle = van10seater;
-                break;
+                break;    
             default:
             throw new InvalidVehicleTypeException("Invalid vehicle type selected");
         }
@@ -169,7 +207,6 @@ public class CarRentalSystem {
             System.out.println("Welcome back, " + existingCustomer.getname() + "!");
             customer = existingCustomer; 
         } else {
-
             System.out.print("Enter your name: ");
             String customerName = scanner.nextLine();
             customer = new Customer(customerName, contact);
@@ -182,7 +219,11 @@ public class CarRentalSystem {
         }
 
         Employee manager = new Employee("Manager", "Rental Manager");
-
+        if (!employeeDAO.saveEmployee(manager)) {
+            System.out.println("Failed to save manager to the database.");
+        }
+        
+        // After assigning worker to the returned vehicle
         System.out.println("You selected: " + vehicle.getType());
         System.out.println();
         vehicle.showModels();        
@@ -191,28 +232,54 @@ public class CarRentalSystem {
         
         String selectedModel = vehicle.getModel(modelchoice - 1);
 
-            
+        
         if (!vehicle.isAvailable(modelchoice - 1)) {
             throw new VehicleAlreadyRentedException("The selected model is already rented out.");
         } else {
             vehicle.setAvailable(modelchoice - 1, false);
+            vehicleDAO.updateVehicleAvailability(vehicle.getId(), false);
             System.out.println("You have rented: " + selectedModel);
         }
 
+        // System.out.print("Enter License Plate: ");
+        // String licensePlate = scanner.nextLine();
 
+        // vehicle.setLicensePlate(licensePlate);
+        // vehicleDAO.saveVehicle(vehicle); 
+    
+        String licensePlate;
+        boolean licensePlateExists;
+    
+        do {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Enter license plate of the vehicle: ");
+            licensePlate = sc.nextLine();
+    
+            // Check if the license plate already exists
+            licensePlateExists = vehicleDAO.isLicensePlateExists(licensePlate);
+            if (licensePlateExists) {
+                System.out.println("This license plate already exists. Please enter a different license plate.");
+            }
+        } while (licensePlateExists);
+
+        vehicle.setLicensePlate(licensePlate);
+        
         System.out.print("\nEnter the number of Hours you need the Vehicle: ");
         int hours = scanner.nextInt();
         double TotalCost = vehicle.CalculateRentalCost(hours);
         
         System.out.println("Total rental cost for " + hours + " hours is: $ " + TotalCost);
 
-        
-        reservations.add (new Reservation (vehicle, selectedModel, hours, customer, manager));
+        // After setting the vehicle as rented
+        if (vehicleDAO.saveVehicle(vehicle)) {
+            System.out.println("Vehicle registered successfully in the database.");
+        } else {
+            System.out.println("Failed to register vehicle in the database.");
+        }
 
-        VehicleDAO vehicleDAO = new VehicleDAO();
-        ReservationDAO reservationDAO = new ReservationDAO();
+        reservations.add (new Reservation (vehicle, hours, customer, manager));
 
-        Reservation reservation = new Reservation(vehicle, selectedModel, hours, customer, manager);
+        Reservation reservation = new Reservation(vehicle, hours, customer, manager);
             if (reservationDAO.saveReservation(reservation)) {
                 System.out.println("Reservation saved successfully!");
             } else {
@@ -226,7 +293,6 @@ public class CarRentalSystem {
             return;
         }
     } 
-    
         
     private static void updateVehicle(Scanner scanner) {
             System.out.println("Feature not implemented yet. Please check back later.");
@@ -265,7 +331,7 @@ public class CarRentalSystem {
             
             switch (choice) {
                 case 1:
-                    registerVehicle(scanner, new Sedan(), new SUV(), new VAN(6), new VAN(10));
+                    //registerVehicle(scanner, new Sedan(), new SUV(), new VAN(6), new VAN(10));
                     break;
                 case 2:
                     updateReservation(scanner);
@@ -308,9 +374,9 @@ public class CarRentalSystem {
         }
         
         Reservation reservation = reservations.remove(reservationNumber);
-        reservation.getVehicle().setAvailable(reservation.getModel().indexOf(reservation.getModel()), true); 
+        reservation.getVehicle().setAvailable(reservation.getVehicle().getModel(0).indexOf(reservation.getVehicle().getModel(0)), true); 
         
-        System.out.println("Reservation for " + reservation.getModel() + " has been canceled.");
+        System.out.println("Reservation for " + reservation.getVehicle().getModel(0) + " has been canceled.");
     }
 
     private static void returnVehicle(Scanner scanner) throws InvalidReservationException {
@@ -324,7 +390,7 @@ public class CarRentalSystem {
         Reservation reservation = reservations.remove(reservationNumber);
         Vehicle vehicle = reservation.getVehicle();
 
-        vehicle.setAvailable(reservation.getModel().indexOf(reservation.getModel()), true); 
+        vehicle.setAvailable(reservation.getVehicle().getModel(0).indexOf(reservation.getVehicle().getModel(0)), true); 
 
         VehicleDAO vehicleDAO = new VehicleDAO();
         if (vehicleDAO.returnVehicle(vehicle.getId())) {
@@ -334,9 +400,8 @@ public class CarRentalSystem {
         }
         
         Employee worker = new Employee("Worker", "Maintenance Worker");
-        System.out.println("The Vehicle " + reservation.getModel() + " has been returned and assigned to " + worker.getrole() + " for maintenance.");
+        System.out.println("The Vehicle " + reservation.getVehicle().getModel(0) + " has been returned and assigned to " + worker.getrole() + " for maintenance.");
     }
-    
     
     private static void displayStatus() {
         System.out.println("\nCurrent Reservations Status:");
@@ -348,7 +413,7 @@ public class CarRentalSystem {
                 System.out.println("Reservation #" + (i + 1) + ":");
                 System.out.println("Customer Name: " + res.getCustomer().getname());
                 System.out.println("Contact: " + res.getCustomer().getcontact());
-                System.out.println("Vehicle: " + res.getVehicle().getType() + " - " + res.getModel());
+                System.out.println("Vehicle: " + res.getVehicle().getType() + " - " + res.getVehicle().getModel(0));
                 System.out.println("Hours Rented: " + res.getHours());
                 System.out.println("Assigned Employee: " + res.getAssignedEmployee().getname() + " (" + res.getAssignedEmployee().getrole() + ")");
                 System.out.println("Total Cost: $" + res.getCost());

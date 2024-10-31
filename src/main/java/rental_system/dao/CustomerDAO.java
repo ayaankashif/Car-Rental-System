@@ -1,8 +1,10 @@
-package rental_system;
+package rental_system.dao;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 
-import rental_system.DB.DbConnection;
+import rental_system.db.DbConnection;
+import rental_system.models.Customer;
 
 public class CustomerDAO {
 
@@ -35,10 +37,11 @@ public class CustomerDAO {
         }
 
         try (Connection connection = DbConnection.getConnection()) {
-            String sql = "INSERT INTO customer (name, contact) VALUES (?, ?)";
+            String sql = "INSERT INTO customer (name, contact, rental_date) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, customer.getname());
             preparedStatement.setString(2, customer.getcontact());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now())); 
 
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0) {

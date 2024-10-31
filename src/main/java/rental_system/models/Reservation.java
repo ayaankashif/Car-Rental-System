@@ -1,17 +1,16 @@
-package rental_system;
+package rental_system.models;
 
-class Reservation {
-    private Vehicle vehicle;
-    private String model;
+public class Reservation {
     private int hours;
     private double cost;
     private Customer customer;
     private Employee assignedEmployee;
     private int id; 
+    private Vehicle vehicle;
+    
 
-    public Reservation(Vehicle vehicle, String model, int hours, Customer customer, Employee assignedEmployee) {
+    public Reservation(Vehicle vehicle, int hours, Customer customer, Employee assignedEmployee) {
         this.vehicle = vehicle;
-        this.model = model;
         this.hours = hours;
         this.cost = vehicle.CalculateRentalCost(hours);
         this.customer = customer;
@@ -29,11 +28,7 @@ class Reservation {
     public Vehicle getVehicle() {
         return vehicle;
     }
-
-    public String getModel() {
-        return model;
-    }
-
+    
     public int getHours() {
         return hours;
     }

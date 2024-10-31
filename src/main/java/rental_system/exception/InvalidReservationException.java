@@ -1,4 +1,4 @@
-package rental_system;
+package rental_system.exception;
 
 public class InvalidReservationException extends CarRentalException {
     public InvalidReservationException(String message) {
