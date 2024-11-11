@@ -29,6 +29,7 @@ public class VehicleDAO {
         return false;
     }
 
+
     public boolean isLicensePlateExists(String licensePlate) {
         String query = "SELECT COUNT(*) FROM Vehicle WHERE LicensePlate = ?";
         try (Connection connection = DbConnection.getConnection();
@@ -37,13 +38,35 @@ public class VehicleDAO {
             statement.setString(1, licensePlate);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1) > 0; // If count is greater than 0, the license plate exists
+                return resultSet.getInt(1) > 0; 
             }
         } catch (SQLException e) {
             e.printStackTrace(); 
         }
         return false; 
     }
+
+
+
+    // public Vehicle findVehicleByLicensePlate(String licensePlate) {
+    //     String query = "SELECT * FROM vehicle WHERE license_plate = ?";
+    //     try (Connection conn = Database.getConnection();
+    //          PreparedStatement stmt = conn.prepareStatement(query)) {
+
+    //         stmt.setString(1, licensePlate);
+    //         ResultSet rs = stmt.executeQuery();
+
+    //         if (rs.next()) {
+    //             return new Vehicle(
+    //                     rs.getString("license_plate")
+               
+    //             );
+    //         }
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return null; // Return null if no vehicle is found
+    // }
 
    
     public boolean returnVehicle(int vehicleId) {

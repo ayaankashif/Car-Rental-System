@@ -41,7 +41,6 @@ public class CarRentalSystem {
         VAN van10seater  = new VAN(10, "SRF-716");
 
         //getvehicles 
-
         // Sedan sedanCorolla = new Sedan("Corolla","M-007");
         // Sedan sedanCivic= new Sedan("Civic","ETF-088");
         // Sedan sedanCity = new Sedan("City","MHE-932");
@@ -52,9 +51,9 @@ public class CarRentalSystem {
         // VAN van10seater  = new VAN(10),"","");
         // VAN van10seater  = new VAN(10,"","");
 
-        employees.add(new Employee("Mananger", "Rental Manager"));
-        employees.add(new Employee("Worker1", "Maintenance Worker"));
-        employees.add(new Employee("Worker2", "Maintenance Worker"));
+        // employees.add(new Employee("Mananger", "Rental Manager"));
+        // employees.add(new Employee("Worker1", "Maintenance Worker"));
+        // employees.add(new Employee("Worker2", "Maintenance Worker"));
 
         boolean exit = false;
     try{
@@ -66,8 +65,10 @@ public class CarRentalSystem {
         System.out.println("2: RentACar");
         System.out.println("3: Add a Customer");
         System.out.println("4: Employees");
-        System.out.println("5: Display Status");
-        System.out.println("6: Exit");
+        System.out.println("5: Add a Employee");
+        System.out.println("6: Register Vehicle");
+        System.out.println("7: Display Status");
+        System.out.println("8: Exit");
         
         int VehicleChoice = scanner.nextInt();
         
@@ -75,28 +76,29 @@ public class CarRentalSystem {
             case 1:
                 vehicleManagement(scanner, sedan, suv, van6seater, van10seater);       
                 break;
-                
             case 2:
                 rentAcar(scanner);
                 break;
-            
             case 3:
                 registerCustomer(scanner);
                 break;
-                
             case 4:
                 displayEmployees(); 
                 break;
-            
             case 5:
+                registeremployee(scanner);
+                break;
+            case 6:
+                //regvehicle(scanner);
+                break;
+            case 7:
                 displayStatus();
                 break;
-                
-            case 6:
+            case 8:
                 exit = true;
                 break;
                 
-                default:
+            default:
                 throw new InvalidVehicleTypeException("Invalid selection for vehicle type");
             }
         }
@@ -107,24 +109,93 @@ public class CarRentalSystem {
     }
 }
 
-    private static void registerCustomer(Scanner scanner) {
+
+    // private static void regvehicle (Scanner scanner){
+    //     System.out.print("Enter Vehicle Type (Sedan/SUV/VAN): ");
+    //     String type = scanner.nextLine();
+        
+    //     System.out.print("Enter Vehicle Model: ");
+    //     String model = scanner.nextLine();
+
+    //     System.out.print("Enter Vehicle Licence Plate: ");
+    //     String licenseno = scanner.nextLine();
+
+    //     Vehicle existingVehicle = vehicleDAO.findVehicleByLicensePlate(licenseno);
+
+    //     if (existingVehicle != null) {
+    //         System.out.println("Vehicle with this license plate already exists.");
+    //         return;
+    //     }
+
+    //     Vehicle newVehicle = new Vehicle(type, model, licenseno, "available");
+
+    //     if (vehicleDAO.saveVehicle(newVehicle)) {  
+    //         System.out.println("Vehicle registered successfully.");
+
+    //     } else {
+    //         System.out.println("Failed to register vehicle. ");
+    //     }
+    // }
+
     
-        Scanner scanner2 = new Scanner(System.in);
+    private static Customer registerCustomer(Scanner scanner) {    
+        Scanner sc1 = new Scanner(System.in);
+        
+        Customer customer;
         System.out.print("Your name: ");    
-        String name = scanner2.nextLine(); 
-        
+        String name = sc1.nextLine(); 
+    
         System.out.print("Your Contact: "); 
-        String contact = scanner2.nextLine(); 
+        String contact = sc1.nextLine(); 
         
-        Customer customer = new Customer(name, contact); 
+        Customer existingCustomer = customerDAO.findCustomerByContact(contact);
+    
+        if (existingCustomer != null) {
+            System.out.println("Welcome back " + existingCustomer.getname() + "!");
+           return existingCustomer; 
+        }
+    
+        customer = new Customer(name, contact); 
         
         if (customerDAO.saveCustomer(customer)) {  
             System.out.println("New customer registered successfully.");
+            return customer;
         } else {
             System.out.println("Failed to register new customer.");
+            return null;
         }
-        scanner2.close();
     }
+
+
+    private static Employee registeremployee (Scanner scanner){
+        Scanner sc = new Scanner(System.in);
+        Employee employee;
+
+        System.out.print("Enter Employee name: ");
+        String emname = sc.nextLine();
+        
+        Employee existingEmployee = employeeDAO.findEmployeeByName(emname);
+        
+        if (existingEmployee != null) {
+            System.out.println("Hey " + existingEmployee.getname() + "!");
+            return existingEmployee; 
+        }
+        else {
+        System.out.print("Enter the role: ");
+        String role = sc.nextLine();
+        
+        employee = new Employee(emname, role);
+
+        if (employeeDAO.saveEmployee(employee)) {  
+            System.out.println("New employee registered successfully.");
+            return employee;
+        } else {
+            System.out.println("Failed to register new employee.");
+            return null;
+        }
+    }
+}
+
 
     private static void vehicleManagement(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) throws InvalidVehicleTypeException, VehicleAlreadyRentedException {
         boolean goBack = false;
@@ -169,6 +240,7 @@ public class CarRentalSystem {
     }
 
     private static void registerVehicle(Scanner scanner, Sedan sedan, SUV suv, VAN van6seater, VAN van10seater) throws InvalidVehicleTypeException, VehicleAlreadyRentedException {
+        //Scanner sc1 = new Scanner (System.in);
         System.out.println("Select vehicle type to rent:");
         System.out.println("1: Sedan");
         System.out.println("2: SUV");
@@ -197,33 +269,31 @@ public class CarRentalSystem {
             throw new InvalidVehicleTypeException("Invalid vehicle type selected");
         }
         
-        System.out.print("Enter your Contact: ");
-        String contact = scanner.nextLine();
+        // System.out.print("Enter your Contact: ");
+        // String contact = scanner.nextLine();
         
-        Customer existingCustomer = customerDAO.findCustomerByContact(contact);
+        // Customer existingCustomer = customerDAO.findCustomerByContact(contact);
 
-        Customer customer;
-        if (existingCustomer != null) {
-            System.out.println("Welcome back, " + existingCustomer.getname() + "!");
-            customer = existingCustomer; 
-        } else {
-            System.out.print("Enter your name: ");
-            String customerName = scanner.nextLine();
-            customer = new Customer(customerName, contact);
+        // Customer customer;
+        // if (existingCustomer != null) {
+        //     System.out.println("Welcome back, " + existingCustomer.getname() + "!");
+        //     customer = existingCustomer; 
+        // } else {
+        //     System.out.print("Enter your name: ");
+        //     String customerName = scanner.nextLine();
+        //     customer = new Customer(customerName, contact);
         
-            if (customerDAO.saveCustomer(customer)) {
-            System.out.println("New customer registered successfully.");
-            } else {
-            System.out.println("Failed to register new customer.");
-            }
-        }
+        //     if (customerDAO.saveCustomer(customer)) {
+        //     System.out.println("New customer registered successfully.");
+        //     } else {
+        //     System.out.println("Failed to register new customer.");
+        //     }
+        // }
 
-        Employee manager = new Employee("Manager", "Rental Manager");
-        if (!employeeDAO.saveEmployee(manager)) {
-            System.out.println("Failed to save manager to the database.");
-        }
+        Customer customer = registerCustomer(scanner);
+
+        Employee employee = registeremployee(scanner);
         
-        // After assigning worker to the returned vehicle
         System.out.println("You selected: " + vehicle.getType());
         System.out.println();
         vehicle.showModels();        
@@ -277,9 +347,9 @@ public class CarRentalSystem {
             System.out.println("Failed to register vehicle in the database.");
         }
 
-        reservations.add (new Reservation (vehicle, hours, customer, manager));
+        reservations.add (new Reservation (vehicle, hours, customer, employee));
 
-        Reservation reservation = new Reservation(vehicle, hours, customer, manager);
+        Reservation reservation = new Reservation(vehicle, hours, customer, employee);
             if (reservationDAO.saveReservation(reservation)) {
                 System.out.println("Reservation saved successfully!");
             } else {
