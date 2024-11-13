@@ -86,7 +86,7 @@ public class CarRentalSystem {
                 displayEmployees(); 
                 break;
             case 5:
-                registeremployee(scanner);
+                registerEmployee(scanner);
                 break;
             case 6:
                 //regvehicle(scanner);
@@ -120,15 +120,13 @@ public class CarRentalSystem {
     //     System.out.print("Enter Vehicle Licence Plate: ");
     //     String licenseno = scanner.nextLine();
 
-    //     Vehicle existingVehicle = vehicleDAO.findVehicleByLicensePlate(licenseno);
+    //     System.out.print("Enter Hourly rate: ");
+    //     double hourlyrate = scanner.nextDouble();
 
-    //     if (existingVehicle != null) {
-    //         System.out.println("Vehicle with this license plate already exists.");
-    //         return;
-    //     }
-
-    //     Vehicle newVehicle = new Vehicle(type, model, licenseno, "available");
-
+    //     //Vehicle existingVehicle = vehicleDAO.findVehicleByLicensePlate(licenseno);
+         
+    //     Vehicle newVehicle = new Vehicle(type, hourlyrate, model, licenseno, "available");
+        
     //     if (vehicleDAO.saveVehicle(newVehicle)) {  
     //         System.out.println("Vehicle registered successfully.");
 
@@ -167,7 +165,7 @@ public class CarRentalSystem {
     }
 
 
-    private static Employee registeremployee (Scanner scanner){
+    private static Employee registerEmployee (Scanner scanner){
         Scanner sc = new Scanner(System.in);
         Employee employee;
 
@@ -292,7 +290,7 @@ public class CarRentalSystem {
 
         Customer customer = registerCustomer(scanner);
 
-        Employee employee = registeremployee(scanner);
+        Employee employee = registerEmployee(scanner);
         
         System.out.println("You selected: " + vehicle.getType());
         System.out.println();
@@ -300,9 +298,12 @@ public class CarRentalSystem {
         System.out.println("\nSelect a Model: ");
         int modelchoice = scanner.nextInt();
         
-        String selectedModel = vehicle.getModel(modelchoice - 1);
+        // for (int i = 0; i < vehicle.getModel().length; i++) {
+        //     System.out.println((i + 1) + ". " + vehicle.getModel()[i]);
+        // }
 
-        
+        String selectedModel = vehicle.getModel(modelchoice - 1);
+    
         if (!vehicle.isAvailable(modelchoice - 1)) {
             throw new VehicleAlreadyRentedException("The selected model is already rented out.");
         } else {

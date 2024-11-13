@@ -4,7 +4,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 
 import rental_system.db.DbConnection;
-import rental_system.models.Customer;
+//import rental_system.models.Customer;
 import rental_system.models.Employee;
 
 public class EmployeeDAO {

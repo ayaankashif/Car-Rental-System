@@ -8,7 +8,7 @@ public abstract class Vehicle {
     private int id;
     private static int idCounter = 0;
     private String LicensePlate;
-
+    private String status;
 
     //{true,false,true}
     //generate license number.
@@ -20,6 +20,7 @@ public abstract class Vehicle {
         this.availability = new boolean[models.length] ;
         this.id = ++idCounter;
         this.LicensePlate = LicensePlate;
+        this.status = "available";
         
         for (int i = 0; i < availability.length; i++) {
             availability[i] = true;
@@ -40,6 +41,10 @@ public abstract class Vehicle {
 
     public double getHourlyRate(){
         return Hourlyrate;
+    }
+
+    public void setHourlyrate(double Hourlyrate) {
+        this.Hourlyrate = Hourlyrate; 
     }
 
     public void setId(int id) {
@@ -88,4 +93,20 @@ public abstract class Vehicle {
         return null;
     }
 
+    public String[] getModels() {
+        return models;
+    }
+
+    public void setModels(String[] models) {
+        this.models = models; 
+    }
+
+    public String getStatus() { 
+        return status; 
+    }
+
+    public void setStatus(String status) { 
+        this.status = status; 
+    }
+    
 }

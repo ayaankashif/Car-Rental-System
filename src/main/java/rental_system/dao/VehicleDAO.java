@@ -70,7 +70,7 @@ public class VehicleDAO {
 
    
     public boolean returnVehicle(int vehicleId) {
-        String sql = "UPDATE Vehicle SET is_available = 1 WHERE vehicle_id = ?";
+        String sql = "UPDATE Vehicle SET is_available = 1 WHERE LicensePlate = ?";
     
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
